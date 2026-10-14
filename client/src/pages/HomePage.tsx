@@ -33,27 +33,32 @@ export function HomePage() {
 
   return (
     <main className="home">
-      <h1>Collab Editor</h1>
-      <p>Edit code together in real time. Create a room and share the link.</p>
-      <button type="button" className="primary" onClick={() => navigate(`/r/${nanoid(ROOM_ID_LENGTH)}`)}>
-        Create room
-      </button>
-      <form className="join-form" onSubmit={handleJoin}>
-        <input
-          value={joinInput}
-          onChange={(e) => {
-            setJoinInput(e.target.value);
-            setError(null);
-          }}
-          placeholder="Room code or link"
-          aria-label="Room code or link"
-          aria-invalid={error !== null}
-        />
-        <button type="submit" disabled={joinInput.trim() === ''}>
-          Join
+      <div className="home__card">
+        <h1>Collab Editor</h1>
+        <p className="home__tagline">Write code together, in real time. Create a room and share the link.</p>
+        <button type="button" className="primary home__create" onClick={() => navigate(`/r/${nanoid(ROOM_ID_LENGTH)}`)}>
+          Create room
         </button>
-      </form>
-      {error && <p className="form-error">{error}</p>}
+        <div className="home__divider">
+          <span>or join an existing room</span>
+        </div>
+        <form className="join-form" onSubmit={handleJoin}>
+          <input
+            value={joinInput}
+            onChange={(e) => {
+              setJoinInput(e.target.value);
+              setError(null);
+            }}
+            placeholder="Room code or link"
+            aria-label="Room code or link"
+            aria-invalid={error !== null}
+          />
+          <button type="submit" disabled={joinInput.trim() === ''}>
+            Join
+          </button>
+        </form>
+        {error && <p className="form-error">{error}</p>}
+      </div>
     </main>
   );
 }
