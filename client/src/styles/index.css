@@ -1,0 +1,176 @@
+:root {
+  --bg: #1e1e1e;
+  --surface: #252526;
+  --border: #3c3c3c;
+  --text: #d4d4d4;
+  --text-muted: #9d9d9d;
+  --accent: #3794ff;
+  --danger: #f87171;
+  --warning-bg: #4b3b12;
+
+  color-scheme: dark;
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  color: var(--text);
+  background: var(--bg);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+a {
+  color: var(--accent);
+}
+
+button,
+input {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  padding: 0.45rem 0.9rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--surface);
+  cursor: pointer;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+button.primary {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: #fff;
+}
+
+input {
+  padding: 0.45rem 0.6rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg);
+}
+
+.form-error {
+  margin: 0;
+  color: var(--danger);
+  font-size: 0.9rem;
+}
+
+/* ---------------------------------------------------------------- home */
+
+.home {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1rem;
+  max-width: 32rem;
+  margin: 0 auto;
+  padding: 4rem 1rem;
+}
+
+.home h1 {
+  margin: 0;
+}
+
+.join-form {
+  display: flex;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.join-form input {
+  flex: 1;
+  min-width: 0;
+}
+
+/* ---------------------------------------------------------------- room */
+
+.room {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.5rem 1rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.toolbar .brand {
+  font-weight: 600;
+  color: var(--text);
+  text-decoration: none;
+}
+
+.toolbar .room-id,
+.toolbar .status {
+  color: var(--text-muted);
+}
+
+.toolbar .me {
+  margin-left: auto;
+}
+
+.notice {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.5rem 1rem;
+  background: var(--warning-bg);
+}
+
+.editor-pane {
+  flex: 1;
+  min-height: 0;
+}
+
+.fatal {
+  max-width: 32rem;
+  margin: 0 auto;
+  padding: 4rem 1rem;
+}
+
+/* ---------------------------------------------------------------- dialog */
+
+.dialog-backdrop {
+  display: grid;
+  place-items: center;
+  height: 100%;
+  padding: 1rem;
+}
+
+.dialog {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  width: 100%;
+  max-width: 22rem;
+  padding: 1.5rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+}
+
+.dialog h2 {
+  margin: 0;
+  font-size: 1.1rem;
+}
