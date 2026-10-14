@@ -11,6 +11,7 @@ import {
   type UserInfo,
 } from '@collab/shared';
 import { MonacoBinding } from '../editor/MonacoBinding';
+import { RemoteCursors } from '../editor/RemoteCursors';
 import { getWebSocketUrl } from '../lib/config';
 import { CollabSocket, type SocketStatus } from './CollabSocket';
 
@@ -58,6 +59,7 @@ export class CollabSession {
   private socket: CollabSocket;
   private otClient: OTClient | null = null;
   private binding: MonacoBinding | null = null;
+  private cursors: RemoteCursors | null = null;
   /** Server document (plus applied remote ops) held while no editor is attached yet. */
   private detachedDoc: string | null = null;
   private users = new Map<string, RemoteUser>();
@@ -85,6 +87,8 @@ export class CollabSession {
     if (this.disposed) return;
     const reattaching = this.binding !== null;
     this.binding?.dispose();
+    this.cursors?.dispose();
+    this.cursors = new RemoteCursors(editor, monacoNs);
     this.binding = new MonacoBinding(editor, monacoNs, {
       onLocalOperation: (op) => this.handleLocalOperation(op),
       onLocalSelection: (sel) => this.sendSelection(sel),
@@ -101,6 +105,8 @@ export class CollabSession {
     }
     this.binding.setDocument(this.detachedDoc ?? '');
     this.detachedDoc = null;
+    // Stored selections refer to the document just loaded, so draw them only now.
+    this.cursors.update([...this.users.values()]);
     this.sendSelection(this.binding.getSelection());
   }
 
@@ -119,6 +125,8 @@ export class CollabSession {
     this.socket.close();
     this.binding?.dispose();
     this.binding = null;
+    this.cursors?.dispose();
+    this.cursors = null;
     this.otClient = null;
     this.listeners.clear();
   }
@@ -185,6 +193,8 @@ export class CollabSession {
           throw new Error(`op for revision ${msg.revision} but client is at ${client.revision}`);
         }
         client.applyServer(TextOperation.fromJSON(msg.ops));
+        // Typing moves the author's caret only via transforms, so wake their label explicitly.
+        this.cursors?.markActive(msg.clientId);
         return;
       }
 
@@ -293,6 +303,9 @@ export class CollabSession {
 
   /** Remote cursors are kept in local coordinates, so every applied op must move them. */
   private transformRemoteSelections(op: TextOperation): void {
+    // Before commitUsers below, so the cursors already match the transformed
+    // selections and don't mistake an edit-induced shift for user movement.
+    this.cursors?.transformAll(op);
     let changed = false;
     for (const [id, user] of this.users) {
       if (!user.selection) continue;
@@ -329,6 +342,7 @@ export class CollabSession {
 
   private commit(changes: Partial<SessionSnapshot>): void {
     if (this.disposed) return;
+    if (changes.users) this.cursors?.update(changes.users);
     this.snapshot = { ...this.snapshot, ...changes };
     for (const listener of this.listeners) listener();
   }

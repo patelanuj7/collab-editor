@@ -1,2 +1,38 @@
-/* Remote cursor and selection base styles are added in Phase 5 (architecture.md §8.8).
-   Per-user colors are injected at runtime into <style id="remote-cursor-styles">. */
+/* Remote cursors (architecture.md §8.8). Per-user colors and label text are injected
+   at runtime into <style id="remote-cursor-styles"> as .rc-caret-<id>, .rc-sel-<id>
+   and .rc-label-<id>::after rules; these are the shared base styles. */
+
+/* Monaco renders beforeContentClassName as a zero-width inline span at the caret. */
+.rc-caret {
+  position: absolute;
+  height: 100%;
+  border-left: 2px solid transparent;
+  margin-left: -1px;
+  pointer-events: none;
+}
+
+.rc-label::after {
+  position: absolute;
+  bottom: 100%;
+  left: -2px;
+  z-index: 10;
+  padding: 1px 5px;
+  border-radius: 3px 3px 3px 0;
+  color: #111;
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.4;
+  white-space: nowrap;
+  opacity: 1;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.rc-label.rc-idle::after {
+  opacity: 0;
+}
+
+.rc-sel {
+  border-radius: 2px;
+}

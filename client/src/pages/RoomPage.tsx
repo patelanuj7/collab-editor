@@ -1,8 +1,11 @@
 import { useState } from 'react';
 import { Link, Navigate, useParams } from 'react-router-dom';
 import { ROOM_ID_REGEX } from '@collab/shared';
+import { ConnectionStatus } from '../components/ConnectionStatus';
 import { EditorPane } from '../components/EditorPane';
 import { NameDialog } from '../components/NameDialog';
+import { Toast } from '../components/Toast';
+import { UserList } from '../components/UserList';
 import { useCollabSession } from '../hooks/useCollabSession';
 import { getStoredName } from '../lib/identity';
 
@@ -36,18 +39,13 @@ function RoomView({ roomId, name }: { roomId: string; name: string }) {
           Collab Editor
         </Link>
         <span className="room-id">Room {roomId}</span>
-        <span className="status">{snapshot.status}</span>
-        <span className="me">{snapshot.me?.name ?? name}</span>
+        <ConnectionStatus status={snapshot.status} />
       </header>
-      {snapshot.notice && (
-        <div className="notice" role="status">
-          {snapshot.notice}
-          <button type="button" onClick={dismissNotice}>
-            Dismiss
-          </button>
-        </div>
-      )}
-      <EditorPane onMount={attachEditor} />
+      <div className="room-body">
+        <EditorPane onMount={attachEditor} />
+        <UserList me={snapshot.me} users={snapshot.users} />
+      </div>
+      <Toast message={snapshot.notice} onDismiss={dismissNotice} />
     </div>
   );
 }
